@@ -85,6 +85,3 @@ jobs:
           # Retry configuration
           retry-attempts: 3
           retry-delay: 10000
-          
-          # Changelog - will use the tag annotation
-          changelog-file: CHANGELOG.md
