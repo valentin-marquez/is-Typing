@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "istyping",
+  "version": "${version}",
+  "name": "IsTyping",
+  "description": "Real-time typing indicators for chat. Displays when players are composing messages.",
+  "authors": [
+    "Nozz"
+  ],
+  "contact": {
+    "homepage": "https://github.com/valentin-marquez/is-typing",
+    "sources": "https://github.com/valentin-marquez/is-typing"
+  },
+  "license": "MIT",
+  "icon": "assets/istyping/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.nozz.it.fabric.IsTypingFabric"
+    ],
+    "client": [
+      "com.nozz.it.fabric.client.IsTypingFabricClient"
+    ]
+  },
+  "mixins": [
+    "istyping.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.2",
+    "minecraft": "~1.20.1",
+    "java": ">=21",
+    "architectury": ">=9.2.14",
+    "fabric-api": "*"
+  }
+}

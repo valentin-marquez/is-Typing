@@ -1,0 +1,51 @@
+# Gradle
+.gradle/
+build/
+out/
+classes/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Eclipse
+.settings/
+.classpath
+.project
+bin/
+
+# VS Code
+
+*.code-workspace
+
+# Fabric
+run/
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# JVM Crash Logs
+hs_err_pid*.log
+replay_pid*.log
+
+# Loom
+.gradle/
+remapped*/
+
+# Minecraft
+run/
+logs/
+crash-reports/
+
+# Build artifacts
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+
+.architectury-transformer/
+!.vscode/tasks.json
+.vscode/settings.json

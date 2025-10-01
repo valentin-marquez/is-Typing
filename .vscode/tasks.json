@@ -1,0 +1,150 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Server",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [
+        ":fabric:runServer",
+        "--args=nogui"
+      ],
+      "options": {
+        "env": {
+          "JAVA_OPTS": "-Xmx1G -Xms1G"
+        }
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "server"
+      },
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Run Client 1",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [
+        ":fabric:runClient",
+        "--args=--username Player1"
+      ],
+      "options": {
+        "env": {
+          "JAVA_OPTS": "-Xmx1G -Xms1G"
+        }
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "clients"
+      },
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Run Client 2",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [
+        ":fabric:runClient",
+        "--args=--username Player2"
+      ],
+      "options": {
+        "env": {
+          "JAVA_OPTS": "-Xmx1G -Xms1G"
+        }
+      },
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "group": "clients"
+      },
+      "problemMatcher": [],
+      "isBackground": true,
+      "dependsOn": ["Wait for Client 1"]
+    },
+    {
+      "label": "Wait for Client 1",
+      "type": "shell",
+      "command": "sleep",
+      "args": ["5"],
+      "windows": {
+        "command": "timeout",
+        "args": ["/t", "5"]
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Server + 2 Clients",
+      "dependsOn": [
+        "Run Server",
+        "Run Client 1",
+        "Run Client 2"
+      ],
+      "dependsOrder": "sequence",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "genSources",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [
+        "genSources"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [
+        "build"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "clean",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [
+        "clean"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
