@@ -1,8 +1,11 @@
 name: Publish to Modrinth
 
 on:
+  push:
+    tags:
+      - 'v*.*.*-*'  # Triggers on tags like v1.0.0-1.20.1
   release:
-    types: [published]
+    types: [published]  # Keep this for manual releases if needed
 
 permissions:
   contents: write
@@ -14,6 +17,25 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      
+      - name: Extract version info from tag
+        id: version
+        run: |
+          # Extract version from tag (e.g., v1.0.0-1.20.1)
+          TAG=${GITHUB_REF#refs/tags/}
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          
+          # Extract mod version (e.g., 1.0.0)
+          MOD_VERSION=$(echo $TAG | sed -E 's/v([0-9]+\.[0-9]+\.[0-9]+)-.*/\1/')
+          echo "mod_version=$MOD_VERSION" >> $GITHUB_OUTPUT
+          
+          # Extract Minecraft version (e.g., 1.20.1)
+          MC_VERSION=$(echo $TAG | sed -E 's/v[0-9]+\.[0-9]+\.[0-9]+-//')
+          echo "mc_version=$MC_VERSION" >> $GITHUB_OUTPUT
+          
+          echo "Tag: $TAG"
+          echo "Mod Version: $MOD_VERSION"
+          echo "Minecraft Version: $MC_VERSION"
       
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -44,13 +66,13 @@ jobs:
             fabric/build/libs/!(*-@(dev|sources|javadoc)).jar
           
           # Mod information
-          name: IsTyping
+          name: "IsTyping ${{ steps.version.outputs.mod_version }} for MC ${{ steps.version.outputs.mc_version }}"
+          version: ${{ steps.version.outputs.tag }}
           version-type: release
           loaders: fabric
           
-          # Game versions
-          game-versions: |
-            1.20.1
+          # Game versions - automatically use the version from the tag
+          game-versions: ${{ steps.version.outputs.mc_version }}
           
           # Dependencies
           dependencies: |
@@ -63,3 +85,6 @@ jobs:
           # Retry configuration
           retry-attempts: 3
           retry-delay: 10000
+          
+          # Changelog - will use the tag annotation
+          changelog-file: CHANGELOG.md
