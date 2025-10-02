@@ -37,11 +37,11 @@ jobs:
           echo "Mod Version: $MOD_VERSION"
           echo "Minecraft Version: $MC_VERSION"
       
-      - name: Set up JDK 21
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17'
           cache: 'gradle'
       
       - name: Grant execute permission for gradlew
@@ -79,7 +79,7 @@ jobs:
             architectury-api(required){modrinth:lhGA9TYQ}
           
           # Java version
-          java: 21
+          java: 17
           
           # Retry configuration
           retry-attempts: 3

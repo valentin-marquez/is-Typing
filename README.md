@@ -3,7 +3,7 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-green.svg)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Mod%20Loader-Fabric-blue.svg)](https://fabricmc.net/)
 [![Architectury](https://img.shields.io/badge/API-Architectury-orange.svg)](https://github.com/architectury/architectury-api)
-[![Java](https://img.shields.io/badge/Java-21-red.svg)](https://www.oracle.com/java/)
+[![Java](https://img.shields.io/badge/Java-17-red.svg)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/nozzdev)
 
@@ -31,7 +31,7 @@ IsTyping is a client-server mod that provides real-time typing indicators in mul
 - **Fabric Loader** 0.17.2+
 - **Fabric API** 0.92.6+
 - **Architectury API** 9.2.14+
-- **Java** 21
+- **Java** 17
 
 **Note:** The mod must be installed on both client and server. Client-only or server-only installations will not work.
 
