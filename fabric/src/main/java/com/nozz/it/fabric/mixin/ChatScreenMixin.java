@@ -54,9 +54,10 @@ public class ChatScreenMixin {
     
     /**
      * Detects changes in chat text and sends typing status
+     * Using render method instead of tick since ChatScreen doesn't override tick in 1.20.2
      */
-    @Inject(method = "tick", at = @At("HEAD"))
-    private void onTick(CallbackInfo ci) {
+    @Inject(method = "render", at = @At("HEAD"))
+    private void onRender(net.minecraft.client.gui.DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (chatField == null) return;
         
         String currentText = chatField.getText();
