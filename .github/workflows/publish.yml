@@ -61,13 +61,8 @@ jobs:
           # GitHub Release configuration
           github-token: ${{ secrets.GITHUB_TOKEN }}
           
-          # Files to upload - only the final remapped jar, exclude dev, sources, javadoc, and shadow variants
-          files: |
-            fabric/build/libs/istyping-fabric-*.jar
-            !fabric/build/libs/*-dev*.jar
-            !fabric/build/libs/*-sources.jar
-            !fabric/build/libs/*-javadoc.jar
-            !fabric/build/libs/*-shadow.jar
+          # Files to upload - only non-dev, non-sources, non-javadoc jars
+          files: fabric/build/libs/!(*-@(dev|sources|javadoc|shadow)).jar
           
           # Mod information
           name: "IsTyping ${{ steps.version.outputs.mod_version }} for MC ${{ steps.version.outputs.mc_version }}"
