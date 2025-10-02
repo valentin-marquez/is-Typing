@@ -3,65 +3,76 @@
 [![Minecraft](https://img.shields.io/badge/Minecraft-1.20.1-green.svg)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Mod%20Loader-Fabric-blue.svg)](https://fabricmc.net/)
 [![Architectury](https://img.shields.io/badge/API-Architectury-orange.svg)](https://github.com/architectury/architectury-api)
-[![Java](https://img.shields.io/badge/Java-17-red.svg)](https://www.oracle.com/java/)
+[![Java](https://img.shields.io/badge/Java-21-red.svg)](https://www.oracle.com/java/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/nozzdev)
 
-A typing indicator for chat with automatic language detection and configurable presentation.
+A multiplayer typing indicator mod for Minecraft Fabric that displays real-time typing status for players composing chat messages.
 
-## Features
+## Overview
 
-- Real-time typing indicators for all players
-- Automatic language detection based on Minecraft client settings
-- Separate client and server configuration files
-- Smooth fade animations and customizable positioning
-- Command filtering (ignores messages starting with /)
-- Low network overhead with optimized packet handling
-- Multi-language support (English, Spanish, Portuguese, French, German, Russian, Japanese, Korean, Chinese)
+IsTyping is a client-server mod that provides real-time typing indicators in multiplayer Minecraft. When a player begins typing in chat, other players see a subtle notification showing who is currently composing a message. The mod features automatic language detection, customizable visuals, and optimized network communication.
+
+## Key Features
+
+- **Real-time typing detection** - Instant visual feedback when players start typing
+- **Automatic language detection** - Supports 9 languages with auto-detection from Minecraft settings
+- **Client-server architecture** - Synchronized state management across all connected players
+- **Configurable on both sides** - Server controls behavior, clients control appearance
+- **Command filtering** - Messages starting with `/` don't trigger indicators
+- **Performance optimized** - Minimal network overhead using heartbeat system (2s intervals)
+- **Anti-spam protection** - Server-side cooldown and timeout management
+- **Smooth animations** - Fade in/out effects with customizable speed
 
 ## Requirements
 
-### Client & Server
-- Minecraft 1.20.1
-- Fabric Loader 0.14.0+
-- Fabric API
-- Architectury API 9.2.14
+### Client & Server (Both Required)
+- **Minecraft** 1.20.1
+- **Fabric Loader** 0.17.2+
+- **Fabric API** 0.92.6+
+- **Architectury API** 9.2.14+
+- **Java** 21
+
+**Note:** The mod must be installed on both client and server. Client-only or server-only installations will not work.
 
 ## Installation
 
-1. Download the mod JAR file
-2. Place in the `mods` folder on both client and server
-3. Launch Minecraft
-4. Configuration files will be created automatically
+1. Download the latest release from [Modrinth](https://modrinth.com/mod/istyping) or [GitHub Releases](https://github.com/valentin-marquez/is-Typing/releases)
+2. Place the JAR file in the `mods` folder on both client and server
+3. Ensure all dependencies are installed (Fabric API, Architectury API)
+4. Launch Minecraft - configuration files will be generated automatically in the `config` folder
 
 ## Configuration
 
+IsTyping uses separate configuration files for client and server to maintain proper separation of concerns.
+
 ### Server Configuration
 
-Edit `config/istyping.properties` (server-side):
+Controls typing detection behavior and synchronization. Located at `config/istyping.properties` (server-side):
 
 ```properties
 # IsTyping Server Configuration
-typing_timeout_ms=4000
-heartbeat_interval_ms=2000
-max_tracked_players=50
-cooldown_between_typing_ms=500
-enable_typing_indicator=true
+typing_timeout_ms=4000              # Time (ms) until player is considered stopped typing
+heartbeat_interval_ms=2000          # Expected client heartbeat interval
+max_tracked_players=50              # Maximum players tracked simultaneously
+cooldown_between_typing_ms=500     # Anti-spam cooldown between typing events
+enable_typing_indicator=true        # Master switch to enable/disable mod
 ```
 
 ### Client Configuration
 
-Edit `config/istyping-client.properties` (client-side):
+Controls visual presentation only. Located at `config/istyping-client.properties` (client-side):
 
 ```properties
 # IsTyping Client Configuration
-language=auto
-overlay_y_offset=28
-max_displayed_players=3
-animation_speed_ms=500
-text_color=FFAAAAAA
-background_color=80000000
-show_animation=true
-fade_speed=0.1
+language=auto                       # UI language (auto detects from Minecraft)
+overlay_y_offset=28                 # Distance from bottom of screen
+max_displayed_players=3             # Max players shown in typing indicator
+animation_speed_ms=500              # Speed of dot animation
+text_color=FFAAAAAA                # Text color in ARGB hex format
+background_color=80000000          # Background color in ARGB hex format
+show_animation=true                 # Enable animated dots
+fade_speed=0.1                      # Speed of fade in/out effect
 ```
 
 ## Configuration Reference
@@ -78,16 +89,35 @@ fade_speed=0.1
 
 ### Client Options
 
-| Property | Range | Default | Description |
-|----------|-------|---------|-------------|
-| `language` | auto/en/es/pt/fr/de/ru/ja/ko/zh | auto | UI language (auto-detects from Minecraft) |
-| `overlay_y_offset` | 10-100 | 28 | Distance from bottom of screen |
-| `max_displayed_players` | 1-10 | 3 | Maximum players shown in indicator |
-| `animation_speed_ms` | 100-2000 | 500 | Speed of dot animation |
-| `text_color` | ARGB hex | FFAAAAAA | Text color in ARGB format |
-| `background_color` | ARGB hex | 80000000 | Background color in ARGB format |
-| `show_animation` | true/false | true | Enable animated dots |
-| `fade_speed` | 0.01-1.0 | 0.1 | Speed of fade in/out effect |
+| Property | Type | Range | Default | Description |
+|----------|------|-------|---------|-------------|
+| `language` | String | auto, en, es, pt, fr, de, ru, ja, ko, zh | auto | UI language - 'auto' detects from Minecraft settings |
+| `overlay_y_offset` | Integer | 10-100 | 28 | Distance in pixels from bottom of screen |
+| `max_displayed_players` | Integer | 1-10 | 3 | Maximum number of players shown simultaneously |
+| `animation_speed_ms` | Integer | 100-2000 | 500 | Speed of dot animation in milliseconds |
+| `text_color` | Hex | ARGB | FFAAAAAA | Text color in ARGB format (Alpha, Red, Green, Blue) |
+| `background_color` | Hex | ARGB | 80000000 | Background color in ARGB format |
+| `show_animation` | Boolean | true/false | true | Enable/disable animated typing dots |
+| `fade_speed` | Float | 0.01-1.0 | 0.1 | Speed of fade in/out animations (higher = faster) |
+
+### Why Separate Configurations?
+
+The mod uses a **client-server architecture** that requires different configuration scopes:
+
+**Server Configuration:**
+- Controls the **behavior** and **timing** of typing detection
+- Validates typing events to prevent abuse
+- Manages state synchronization across all connected clients
+- Enforces rate limiting and timeout rules
+- Ensures consistent behavior for all players
+
+**Client Configuration:**
+- Controls only **visual presentation** on your screen
+- Does not affect other players' experience
+- Allows personal customization without server permission
+- Cannot be used to bypass server-side limitations
+
+This separation ensures that gameplay-affecting behavior (timing, anti-spam) is controlled by the server, while visual preferences remain client-side.
 
 ## Architecture
 
@@ -190,14 +220,68 @@ The client automatically detects the Minecraft language setting and maps it to s
 | Korean | ko | "Player1님이 입력 중..." |
 | Chinese | zh | "Player1正在输入..." |
 
-## Building
+## Building from Source
 
 ```bash
+# Clone the repository
+git clone https://github.com/valentin-marquez/is-Typing.git
+cd is-Typing
+
+# Build using Gradle
 ./gradlew build
+
+# Output location
+# fabric/build/libs/istyping-fabric-<version>.jar
 ```
 
-Built JARs will be available in:
-- `fabric/build/libs/` (Fabric mod)
+### Development Setup
+
+```bash
+# Generate IDE files
+./gradlew genSources
+
+# Run test server
+./gradlew :fabric:runServer
+
+# Run test client
+./gradlew :fabric:runClient
+```
+
+## Project Structure
+
+```
+is-Typing/
+├── common/          # Shared code between platforms
+│   └── src/main/java/com/nozz/it/
+├── fabric/          # Fabric-specific implementation
+│   └── src/main/
+│       ├── java/com/nozz/it/fabric/
+│       └── resources/
+│           ├── fabric.mod.json
+│           └── assets/istyping/icon.png
+└── docs/            # Documentation files
+    └── MODRINTH.md  # Modrinth page content
+```
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+If you enjoy this mod and want to support its development:
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/nozzdev)
+
+## Links
+
+- [Modrinth](https://modrinth.com/mod/istyping)
+- [GitHub Repository](https://github.com/valentin-marquez/is-Typing)
+- [Issue Tracker](https://github.com/valentin-marquez/is-Typing/issues)
 - `common/build/libs/` (Common library)
 
 ## License
