@@ -1,7 +1,7 @@
 package com.nozz.it.fabric.client;
 
-import com.nozz.it.fabric.client.config.ClientConfig;
-import com.nozz.it.fabric.client.render.TypingOverlay;
+import com.nozz.it.client.config.ClientConfig;
+import com.nozz.it.client.render.TypingOverlay;
 import com.nozz.it.network.IsTypingNetworkManager;
 import dev.architectury.platform.Platform;
 import net.fabricmc.api.ClientModInitializer;
@@ -25,7 +25,6 @@ public class IsTypingFabricClient implements ClientModInitializer {
             TypingOverlay.render(drawContext, tickDelta);
         });
         
-        System.out.println("[IsTyping] Client initialized with language: " + 
-            ClientConfig.getInstance().getDetectedLanguage());
+        System.out.println("[IsTyping] Fabric Client initialized");
     }
 }

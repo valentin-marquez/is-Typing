@@ -1,4 +1,4 @@
-package com.nozz.it.fabric.mixin;
+package com.nozz.it.mixin;
 
 import com.nozz.it.network.IsTypingNetworkManager;
 import com.nozz.it.network.StartTypingPacket;

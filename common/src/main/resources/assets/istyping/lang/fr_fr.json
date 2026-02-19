@@ -1,0 +1,7 @@
+{
+    "istyping.message.single": "%s est en train d'écrire",
+    "istyping.message.dual": "%s et %s sont en train d'écrire",
+    "istyping.message.triple": "%s, %s et %s sont en train d'écrire",
+    "istyping.message.multiple": "%s, %s et %d autres sont en train d'écrire",
+    "istyping.easter_egg.herobrine": "Herobrine est en train d'écrire"
+}

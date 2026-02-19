@@ -1,0 +1,7 @@
+{
+    "istyping.message.single": "%s is typing",
+    "istyping.message.dual": "%s and %s are typing",
+    "istyping.message.triple": "%s, %s, and %s are typing",
+    "istyping.message.multiple": "%s, %s, and %d others are typing",
+    "istyping.easter_egg.herobrine": "Herobrine is typing"
+}

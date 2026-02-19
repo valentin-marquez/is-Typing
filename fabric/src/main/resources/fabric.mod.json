@@ -3,13 +3,14 @@
   "id": "istyping",
   "version": "${version}",
   "name": "IsTyping",
-  "description": "Real-time typing indicators for chat. Displays when players are composing messages.",
+  "description": "Lightweight typing indicator for Minecraft multiplayer that shows when other players are composing chat messages.",
   "authors": [
     "Nozz"
   ],
   "contact": {
     "homepage": "https://github.com/valentin-marquez/is-typing",
-    "sources": "https://github.com/valentin-marquez/is-typing"
+    "sources": "https://github.com/valentin-marquez/is-typing",
+    "issues": "https://github.com/valentin-marquez/is-typing/issues"
   },
   "license": "MIT",
   "icon": "assets/istyping/icon.png",
@@ -23,7 +24,8 @@
     ]
   },
   "mixins": [
-    "istyping.mixins.json"
+    "istyping.mixins.json",
+    "istyping-common.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.17.2",

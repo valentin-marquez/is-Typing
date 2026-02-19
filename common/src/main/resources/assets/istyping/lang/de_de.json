@@ -1,0 +1,7 @@
+{
+    "istyping.message.single": "%s schreibt",
+    "istyping.message.dual": "%s und %s schreiben",
+    "istyping.message.triple": "%s, %s und %s schreiben",
+    "istyping.message.multiple": "%s, %s und %d andere schreiben",
+    "istyping.easter_egg.herobrine": "Herobrine schreibt"
+}

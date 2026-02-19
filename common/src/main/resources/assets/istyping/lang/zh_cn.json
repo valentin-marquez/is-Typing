@@ -1,0 +1,7 @@
+{
+    "istyping.message.single": "%s正在输入",
+    "istyping.message.dual": "%s和%s正在输入",
+    "istyping.message.triple": "%s、%s和%s正在输入",
+    "istyping.message.multiple": "%s、%s和其他%d人正在输入",
+    "istyping.easter_egg.herobrine": "Herobrine正在输入"
+}

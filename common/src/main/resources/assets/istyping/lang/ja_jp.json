@@ -1,0 +1,7 @@
+{
+    "istyping.message.single": "%sが入力しています",
+    "istyping.message.dual": "%sと%sが入力しています",
+    "istyping.message.triple": "%s、%s、%sが入力しています",
+    "istyping.message.multiple": "%s、%s、他%d人が入力しています",
+    "istyping.easter_egg.herobrine": "Herobrineが入力しています"
+}

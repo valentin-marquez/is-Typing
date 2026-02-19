@@ -1,0 +1,210 @@
+name: Publish Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+env:
+  JAVA_VERSION: "17"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      minecraft_version: ${{ steps.read_props.outputs.minecraft_version }}
+      supported_versions: ${{ steps.read_props.outputs.supported_versions }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Read version properties
+        id: read_props
+        run: |
+          MC_VERSION=$(grep '^minecraft_version' gradle.properties | cut -d'=' -f2 | tr -d ' ' | tr -d '\r')
+          SUPPORTED=$(grep '^supported_minecraft_versions' gradle.properties | cut -d'=' -f2 | tr -d ' ' | tr -d '\r')
+          
+          if [ -z "$SUPPORTED" ]; then
+            SUPPORTED="$MC_VERSION"
+          fi
+          
+          echo "minecraft_version=$MC_VERSION" >> $GITHUB_OUTPUT
+          echo "supported_versions=$SUPPORTED" >> $GITHUB_OUTPUT
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build
+        run: |
+          chmod +x ./gradlew
+          ./gradlew clean build --no-daemon
+
+      - name: Upload Fabric JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: fabric-jar
+          path: |
+            fabric/build/libs/istyping-fabric-*.jar
+            !fabric/build/libs/*-dev-shadow.jar
+            !fabric/build/libs/*-sources.jar
+          if-no-files-found: error
+
+      - name: Upload Forge JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: forge-jar
+          path: |
+            forge/build/libs/istyping-forge-*.jar
+            !forge/build/libs/*-dev-shadow.jar
+            !forge/build/libs/*-sources.jar
+          if-no-files-found: error
+
+  publish-fabric:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Fabric JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: fabric-jar
+          path: fabric-artifacts
+
+      - name: Determine version type
+        id: version_type
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          if [[ "$TAG" == *"-alpha"* ]]; then
+            echo "type=alpha" >> $GITHUB_OUTPUT
+          elif [[ "$TAG" == *"-beta"* ]] || [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
+            echo "type=beta" >> $GITHUB_OUTPUT
+          else
+            echo "type=release" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish Fabric to Modrinth & CurseForge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: fabric-artifacts/istyping-fabric-*.jar
+          name: "IsTyping ${{ github.event.release.tag_name }} (Fabric)"
+          version: ${{ github.event.release.tag_name }}
+          version-type: ${{ steps.version_type.outputs.type }}
+          changelog: ${{ github.event.release.body }}
+          game-versions: ${{ needs.build.outputs.supported_versions }}
+          loaders: fabric
+          dependencies: |
+            fabric-api | depends
+            architectury-api | depends
+
+  publish-forge:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Forge JAR
+        uses: actions/download-artifact@v4
+        with:
+          name: forge-jar
+          path: forge-artifacts
+
+      - name: Determine version type
+        id: version_type
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          if [[ "$TAG" == *"-alpha"* ]]; then
+            echo "type=alpha" >> $GITHUB_OUTPUT
+          elif [[ "$TAG" == *"-beta"* ]] || [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
+            echo "type=beta" >> $GITHUB_OUTPUT
+          else
+            echo "type=release" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish Forge to Modrinth & CurseForge
+        uses: Kir-Antipov/mc-publish@v3.3
+        with:
+          modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
+          modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+
+          curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
+          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+
+          files: forge-artifacts/istyping-forge-*.jar
+          name: "IsTyping ${{ github.event.release.tag_name }} (Forge)"
+          version: "${{ github.event.release.tag_name }}-forge"
+          version-type: ${{ steps.version_type.outputs.type }}
+          changelog: ${{ github.event.release.body }}
+          game-versions: ${{ needs.build.outputs.supported_versions }}
+          loaders: forge
+          dependencies: |
+            architectury-api | depends
+
+  # publish-neoforge:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download NeoForge JAR
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: neoforge-jar
+  #         path: neoforge-artifacts
+  #
+  #     - name: Determine version type
+  #       id: version_type
+  #       run: |
+  #         TAG="${{ github.event.release.tag_name }}"
+  #         if [[ "$TAG" == *"-alpha"* ]]; then
+  #           echo "type=alpha" >> $GITHUB_OUTPUT
+  #         elif [[ "$TAG" == *"-beta"* ]] || [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
+  #           echo "type=beta" >> $GITHUB_OUTPUT
+  #         else
+  #           echo "type=release" >> $GITHUB_OUTPUT
+  #         fi
+  #
+  #     - name: Publish NeoForge to Modrinth & CurseForge
+  #       uses: Kir-Antipov/mc-publish@v3.3
+  #       with:
+  #         modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
+  #         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
+  #
+  #         curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
+  #         curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
+  #
+  #         files: neoforge-artifacts/vouch-neoforge-*.jar
+  #         name: "Vouch ${{ github.event.release.tag_name }} (NeoForge)"
+  #         version: "${{ github.event.release.tag_name }}-neoforge"
+  #         version-type: ${{ steps.version_type.outputs.type }}
+  #         changelog: ${{ github.event.release.body }}
+  #         game-versions: ${{ needs.build.outputs.supported_versions }}
+  #         loaders: neoforge
+  #         dependencies: |
+  #           architectury-api | depends
+
+  attach-jars:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Attach JARs to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/fabric-jar/istyping-fabric-*.jar
+            artifacts/forge-jar/istyping-forge-*.jar

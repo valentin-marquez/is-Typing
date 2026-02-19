@@ -1,0 +1,7 @@
+{
+    "istyping.message.single": "%s печатает",
+    "istyping.message.dual": "%s и %s печатают",
+    "istyping.message.triple": "%s, %s и %s печатают",
+    "istyping.message.multiple": "%s, %s и ещё %d печатают",
+    "istyping.easter_egg.herobrine": "Herobrine печатает"
+}

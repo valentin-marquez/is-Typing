@@ -1,148 +1,144 @@
 {
   "version": "2.0.0",
   "tasks": [
+    // -------------------------------------------------------------------------
+    // FABRIC SERVER & CLIENTS
+    // -------------------------------------------------------------------------
     {
-      "label": "Run Server",
+      "label": "Run Fabric Server",
       "type": "shell",
-      "command": "./gradlew",
-      "args": [
-        ":fabric:runServer",
-        "--args=nogui"
-      ],
-      "options": {
-        "env": {
-          "JAVA_OPTS": "-Xmx1G -Xms1G"
-        }
-      },
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "server"
-      },
-      "problemMatcher": [],
-      "isBackground": true
-    },
-    {
-      "label": "Run Client 1",
-      "type": "shell",
-      "command": "./gradlew",
-      "args": [
-        ":fabric:runClient",
-        "--args=--username Player1"
-      ],
-      "options": {
-        "env": {
-          "JAVA_OPTS": "-Xmx1G -Xms1G"
-        }
-      },
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "clients"
-      },
-      "problemMatcher": [],
-      "isBackground": true
-    },
-    {
-      "label": "Run Client 2",
-      "type": "shell",
-      "command": "./gradlew",
-      "args": [
-        ":fabric:runClient",
-        "--args=--username Player2"
-      ],
-      "options": {
-        "env": {
-          "JAVA_OPTS": "-Xmx1G -Xms1G"
-        }
-      },
-      "group": "test",
-      "presentation": {
-        "reveal": "always",
-        "panel": "dedicated",
-        "group": "clients"
-      },
-      "problemMatcher": [],
-      "isBackground": true,
-      "dependsOn": ["Wait for Client 1"]
-    },
-    {
-      "label": "Wait for Client 1",
-      "type": "shell",
-      "command": "sleep",
-      "args": ["5"],
+      "command": "${workspaceFolder}/gradlew",
       "windows": {
-        "command": "timeout",
-        "args": ["/t", "5"]
+        "command": "${workspaceFolder}/gradlew.bat"
       },
-      "presentation": {
-        "reveal": "silent",
-        "panel": "shared"
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Server + 2 Clients",
-      "dependsOn": [
-        "Run Server",
-        "Run Client 1",
-        "Run Client 2"
-      ],
-      "dependsOrder": "sequence",
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
+      "args": [":fabric:runServer", "--no-daemon", "--console=plain"],
+      "group": "none",
+      "isBackground": true,
       "presentation": {
         "reveal": "always",
-        "panel": "dedicated"
+        "panel": "dedicated",
+        "focus": false,
+        "showReuseMessage": true,
+        "clear": false
       },
       "problemMatcher": []
     },
     {
-      "label": "genSources",
+      "label": "Run Fabric Client 1",
       "type": "shell",
-      "command": "./gradlew",
+      "command": "${workspaceFolder}/gradlew",
+      "windows": {
+        "command": "${workspaceFolder}/gradlew.bat"
+      },
       "args": [
-        "genSources"
+        ":fabric:runClient",
+        "--no-daemon",
+        "--console=plain",
+        "--args=--username Dev1 --width 854 --height 480"
       ],
-      "group": "build",
+      "group": "none",
+      "isBackground": true,
       "presentation": {
         "reveal": "always",
-        "panel": "shared"
+        "panel": "dedicated",
+        "focus": false,
+        "showReuseMessage": true,
+        "clear": false
       },
       "problemMatcher": []
     },
     {
-      "label": "build",
+      "label": "Run Fabric Client 2",
       "type": "shell",
-      "command": "./gradlew",
-      "args": [
-        "build"
-      ],
-      "group": {
-        "kind": "build",
-        "isDefault": true
+      "command": "${workspaceFolder}/gradlew",
+      "windows": {
+        "command": "${workspaceFolder}/gradlew.bat"
       },
+      "args": [
+        ":fabric:runClient",
+        "--no-daemon",
+        "--console=plain",
+        "--args=--username Dev2 --width 854 --height 480"
+      ],
+      "group": "none",
+      "isBackground": true,
       "presentation": {
         "reveal": "always",
-        "panel": "shared"
+        "panel": "dedicated",
+        "focus": false,
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+
+    // -------------------------------------------------------------------------
+    // FORGE SERVER & CLIENTS
+    // -------------------------------------------------------------------------
+    {
+      "label": "Run Forge Server",
+      "type": "shell",
+      "command": "${workspaceFolder}/gradlew",
+      "windows": {
+        "command": "${workspaceFolder}/gradlew.bat"
+      },
+      "args": [":forge:runServer", "--no-daemon", "--console=plain"],
+      "group": "none",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "showReuseMessage": true,
+        "clear": false
       },
       "problemMatcher": []
     },
     {
-      "label": "clean",
+      "label": "Run Forge Client 1",
       "type": "shell",
-      "command": "./gradlew",
+      "command": "${workspaceFolder}/gradlew",
+      "windows": {
+        "command": "${workspaceFolder}/gradlew.bat"
+      },
       "args": [
-        "clean"
+        ":forge:runClient",
+        "--no-daemon",
+        "--console=plain",
+        "--args=--username Dev1 --width 854 --height 480"
       ],
-      "group": "build",
+      "group": "none",
+      "isBackground": true,
       "presentation": {
         "reveal": "always",
-        "panel": "shared"
+        "panel": "dedicated",
+        "focus": false,
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run Forge Client 2",
+      "type": "shell",
+      "command": "${workspaceFolder}/gradlew",
+      "windows": {
+        "command": "${workspaceFolder}/gradlew.bat"
+      },
+      "args": [
+        ":forge:runClient",
+        "--no-daemon",
+        "--console=plain",
+        "--args=--username Dev2 --width 854 --height 480"
+      ],
+      "group": "none",
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "focus": false,
+        "showReuseMessage": true,
+        "clear": false
       },
       "problemMatcher": []
     }

@@ -49,3 +49,6 @@ crash-reports/
 .architectury-transformer/
 !.vscode/tasks.json
 .vscode/settings.json
+
+
+tasks.md

@@ -28,11 +28,11 @@ public class IsTyping {
         IsTypingNetworkManager.init();
         
         // Load server configuration (server only)
-        if (Platform.getEnvironment() == Env.SERVER) {
+        // Load server configuration when any server starts (Dedicated or Integrated)
+        dev.architectury.event.events.common.LifecycleEvent.SERVER_STARTING.register(server -> {
             File configDir = Platform.getConfigFolder().toFile();
             ServerConfig.getInstance().load(configDir);
-            LOGGER.info("Server configuration loaded");
-        }
+        });
         
         LOGGER.info("IsTyping mod initialized successfully!");
     }

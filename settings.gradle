@@ -11,3 +11,4 @@ rootProject.name = 'istyping'
 
 include 'common'
 include 'fabric'
+include 'forge'

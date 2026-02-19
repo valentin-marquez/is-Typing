@@ -5,7 +5,6 @@
   "minVersion": "0.8",
   "refmap": "istyping-fabric-fabric-refmap.json",
   "client": [
-    "ChatScreenMixin"
   ],
   "mixins": [
   ],

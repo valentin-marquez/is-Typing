@@ -1,0 +1,7 @@
+{
+    "istyping.message.single": "%s님이 입력 중",
+    "istyping.message.dual": "%s님과 %s님이 입력 중",
+    "istyping.message.triple": "%s님, %s님, %s님이 입력 중",
+    "istyping.message.multiple": "%s님, %s님 외 %d명이 입력 중",
+    "istyping.easter_egg.herobrine": "Herobrine님이 입력 중"
+}
