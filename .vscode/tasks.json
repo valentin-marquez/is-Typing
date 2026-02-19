@@ -76,13 +76,13 @@
     // FORGE SERVER & CLIENTS
     // -------------------------------------------------------------------------
     {
-      "label": "Run Forge Server",
+      "label": "Run neoforge Server",
       "type": "shell",
       "command": "${workspaceFolder}/gradlew",
       "windows": {
         "command": "${workspaceFolder}/gradlew.bat"
       },
-      "args": [":forge:runServer", "--no-daemon", "--console=plain"],
+      "args": [":neoforge:runServer", "--no-daemon", "--console=plain"],
       "group": "none",
       "isBackground": true,
       "presentation": {
@@ -95,14 +95,14 @@
       "problemMatcher": []
     },
     {
-      "label": "Run Forge Client 1",
+      "label": "Run NeoForge Client 1",
       "type": "shell",
       "command": "${workspaceFolder}/gradlew",
       "windows": {
         "command": "${workspaceFolder}/gradlew.bat"
       },
       "args": [
-        ":forge:runClient",
+        ":neoforge:runClient",
         "--no-daemon",
         "--console=plain",
         "--args=--username Dev1 --width 854 --height 480"
@@ -119,14 +119,14 @@
       "problemMatcher": []
     },
     {
-      "label": "Run Forge Client 2",
+      "label": "Run NeoForge Client 2",
       "type": "shell",
       "command": "${workspaceFolder}/gradlew",
       "windows": {
         "command": "${workspaceFolder}/gradlew.bat"
       },
       "args": [
-        ":forge:runClient",
+        ":neoforge:runClient",
         "--no-daemon",
         "--console=plain",
         "--args=--username Dev2 --width 854 --height 480"

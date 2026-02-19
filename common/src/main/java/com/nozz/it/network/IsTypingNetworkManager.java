@@ -1,81 +1,61 @@
 package com.nozz.it.network;
 
 import dev.architectury.networking.NetworkManager;
+import dev.architectury.utils.Env;
+import dev.architectury.utils.EnvExecutor;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 
 /**
- * Network manager for the IsTyping mod.
  * Handles registration and sending of packets between client and server.
  */
 public class IsTypingNetworkManager {
     
-    // Packet identifiers
-    public static final Identifier START_TYPING = new Identifier("istyping", "start_typing");
-    public static final Identifier STOP_TYPING = new Identifier("istyping", "stop_typing");
-    public static final Identifier PLAYER_TYPING = new Identifier("istyping", "player_typing");
-    
-    /**
-     * Registers C2S packets (Client to Server)
-     * This method should be called on both client and server.
-     * In Architectury 9.2.14, C2S receivers are registered on both sides.
-     */
     public static void init() {
-        // Register C2S packets (Client to Server)
-        // These receivers will run on the server when they receive packets from clients
         NetworkManager.registerReceiver(
-            NetworkManager.c2s(), 
-            START_TYPING, 
-            (buf, context) -> StartTypingPacket.receive(buf, context)
+            NetworkManager.Side.C2S,
+            StartTypingPacket.ID,
+            StartTypingPacket.CODEC,
+            StartTypingPacket::receive
         );
-        
         NetworkManager.registerReceiver(
-            NetworkManager.c2s(), 
-            STOP_TYPING, 
-            (buf, context) -> StopTypingPacket.receive(buf, context)
+            NetworkManager.Side.C2S,
+            StopTypingPacket.ID,
+            StopTypingPacket.CODEC,
+            StopTypingPacket::receive
+        );
+        // Register S2C payload type so the server has the PacketCodec available to *encode* S2C packets.
+        // We only do this on the physical SERVER. The client registers its receiver in initClient().
+        EnvExecutor.runInEnv(Env.SERVER, () -> () ->
+            NetworkManager.registerS2CPayloadType(
+                PlayerTypingPacket.ID,
+                PlayerTypingPacket.CODEC
+            )
         );
     }
     
-    /**
-     * Registers S2C packets (client only)
-     */
     public static void initClient() {
+        // Register PlayerTypingPacket (S2C) on client side only
         NetworkManager.registerReceiver(
-            NetworkManager.s2c(), 
-            PLAYER_TYPING, 
-            (buf, context) -> PlayerTypingPacket.receive(buf, context)
+            NetworkManager.Side.S2C,
+            PlayerTypingPacket.ID,
+            PlayerTypingPacket.CODEC,
+            PlayerTypingPacket::receive
         );
     }
     
-    /**
-     * Sends a packet from client to server
-     */
-    public static void sendToServer(Object packet) {
-        if (packet instanceof StartTypingPacket) {
-            NetworkManager.sendToServer(START_TYPING, ((StartTypingPacket) packet).toBuffer());
-        } else if (packet instanceof StopTypingPacket) {
-            NetworkManager.sendToServer(STOP_TYPING, ((StopTypingPacket) packet).toBuffer());
-        }
+    public static void sendToServer(CustomPayload packet) {
+        NetworkManager.sendToServer(packet);
     }
     
-    /**
-     * Sends a packet from server to a specific client
-     */
-    public static void sendToPlayer(ServerPlayerEntity player, Object packet) {
-        if (packet instanceof PlayerTypingPacket) {
-            NetworkManager.sendToPlayer(player, PLAYER_TYPING, ((PlayerTypingPacket) packet).toBuffer());
-        }
+    public static void sendToPlayer(ServerPlayerEntity player, CustomPayload packet) {
+        NetworkManager.sendToPlayer(player, packet);
     }
     
-    /**
-     * Sends a packet from server to all clients
-     */
-    public static void sendToAllClients(MinecraftServer server, Object packet) {
-        if (packet instanceof PlayerTypingPacket) {
-            for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                sendToPlayer(player, packet);
-            }
+    public static void sendToAllClients(MinecraftServer server, CustomPayload packet) {
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            sendToPlayer(player, packet);
         }
     }
 }

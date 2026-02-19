@@ -5,6 +5,7 @@ import com.nozz.it.client.config.ClientConfig;
 import com.nozz.it.client.i18n.TypingMessages;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 
 import java.util.List;
@@ -52,9 +53,32 @@ public class TypingOverlay {
         net.minecraft.text.MutableText message = buildTypingMessage(typingPlayers, config);
         if (message == null) return;
 
+        // Gather chat width limitation
+        int rawChatWidth = client.inGameHud.getChatHud().getWidth();
+        // Calculate max safe width to strictly prevent Hotbar overlap (Half screen minus padding)
+        int maxSafeWidth = (client.getWindow().getScaledWidth() / 2) - 30;
+        
+        int chatWidth = Math.min(rawChatWidth, maxSafeWidth);
+        // Fallback or padding
+        if (chatWidth < 100) chatWidth = 320;
+
         Text text = message;
-        int textWidth = client.textRenderer.getWidth(text);
+        List<OrderedText> lines = client.textRenderer.wrapLines(text, chatWidth);
+
         int textHeight = client.textRenderer.fontHeight;
+        int totalHeight = textHeight * lines.size();
+        
+        // Push the starting Y higher depending on how many lines we have so the bottom line stays at the original chatY
+        chatY = chatY - (totalHeight - textHeight);
+
+        // Find the maximum width among the wrapped lines to draw a properly sized background box
+        int maxLineWidth = 0;
+        for (OrderedText line : lines) {
+            int lineWidth = client.textRenderer.getWidth(line);
+            if (lineWidth > maxLineWidth) {
+                maxLineWidth = lineWidth;
+            }
+        }
 
         // Use configuration colors
         int bgAlpha = (int)(fadeAlpha * ((config.getBackgroundColor() >> 24) & 0xFF));
@@ -63,8 +87,8 @@ public class TypingOverlay {
         context.fill(
             chatX,
             chatY - 2,
-            chatX + textWidth + 4,
-            chatY + textHeight + 2,
+            chatX + maxLineWidth + 4,
+            chatY + totalHeight + 2,
             backgroundColor
         );
 
@@ -72,14 +96,18 @@ public class TypingOverlay {
         int textAlpha = (int)(fadeAlpha * ((config.getTextColor() >> 24) & 0xFF));
         int color = (textAlpha << 24) | (config.getTextColor() & 0xFFFFFF);
 
-        context.drawText(
-            client.textRenderer,
-            text,
-            chatX + 2,
-            chatY,
-            color,
-            false
-        );
+        int currentY = chatY;
+        for (OrderedText line : lines) {
+            context.drawText(
+                client.textRenderer,
+                line,
+                chatX + 2,
+                currentY,
+                color,
+                false
+            );
+            currentY += textHeight;
+        }
     }
 
     /**

@@ -69,7 +69,7 @@ public class ClientConfig {
             showAnimation = toml.getBoolean("Client", "show_animation", true);
             fadeSpeed = (float) toml.getDouble("Client", "fade_speed", 0.1);
             
-            System.out.println("[IsTyping] Client config loaded (TOML)");
+            com.nozz.it.IsTyping.LOGGER.info("[IsTyping] Client config loaded (TOML)");
         } else {
             createDefaultConfig(configFile);
         }
@@ -81,9 +81,9 @@ public class ClientConfig {
             SimpleTomlConfig toml = new SimpleTomlConfig();
             updateToDefaults(toml);
             toml.save(configFile);
-            System.out.println("[IsTyping] Created default client config (TOML)");
+            com.nozz.it.IsTyping.LOGGER.info("[IsTyping] Created default client config (TOML)");
         } catch (Exception e) {
-            System.err.println("[IsTyping] Failed to create client config: " + e.getMessage());
+            com.nozz.it.IsTyping.LOGGER.error("[IsTyping] Failed to create client config: " + e.getMessage());
         }
     }
 

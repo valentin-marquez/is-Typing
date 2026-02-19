@@ -47,7 +47,7 @@ public class ServerConfig {
             heartbeatIntervalMs = toml.getInt("Server", "heartbeat_interval_ms", 2000);
             cooldownBetweenTypingMs = toml.getInt("Server", "cooldown_between_typing_ms", 500);
             
-            System.out.println("[IsTyping] Server config loaded (TOML)");
+            com.nozz.it.IsTyping.LOGGER.info("[IsTyping] Server config loaded (TOML)");
         } else {
             createDefaultConfig(configFile);
         }
@@ -59,9 +59,9 @@ public class ServerConfig {
             SimpleTomlConfig toml = new SimpleTomlConfig();
             updateToDefaults(toml);
             toml.save(configFile);
-            System.out.println("[IsTyping] Created default server config (TOML) at: " + configFile.getAbsolutePath());
+            com.nozz.it.IsTyping.LOGGER.info("[IsTyping] Created default server config (TOML) at: " + configFile.getAbsolutePath());
         } catch (Exception e) {
-            System.err.println("[IsTyping] Failed to create default config: " + e.getMessage());
+            com.nozz.it.IsTyping.LOGGER.error("[IsTyping] Failed to create default config: " + e.getMessage());
         }
     }
 

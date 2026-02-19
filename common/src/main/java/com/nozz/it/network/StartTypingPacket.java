@@ -2,35 +2,23 @@ package com.nozz.it.network;
 
 import com.nozz.it.server.TypingTracker;
 import dev.architectury.networking.NetworkManager.PacketContext;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
-import io.netty.buffer.Unpooled;
+import net.minecraft.util.Identifier;
 
-/**
- * C2S packet sent when a player starts typing.
- */
-public class StartTypingPacket {
-    
-    public StartTypingPacket() {}
-    
-    /**
-     * Constructs the packet from a buffer
-     */
-    public StartTypingPacket(PacketByteBuf buf) {
-        // This packet has no additional data
+public record StartTypingPacket() implements CustomPayload {
+
+    public static final CustomPayload.Id<StartTypingPacket> ID = new CustomPayload.Id<>(Identifier.of("istyping", "start_typing"));
+    public static final PacketCodec<RegistryByteBuf, StartTypingPacket> CODEC = PacketCodec.unit(new StartTypingPacket());
+
+    @Override
+    public CustomPayload.Id<? extends CustomPayload> getId() {
+        return ID;
     }
-    
-    /**
-     * Writes the packet to a buffer
-     */
-    public PacketByteBuf toBuffer() {
-        return new PacketByteBuf(Unpooled.buffer());
-    }
-    
-    /**
-     * Handles packet reception on the server
-     */
-    public static void receive(PacketByteBuf buf, PacketContext context) {
+
+    public static void receive(StartTypingPacket payload, PacketContext context) {
         context.queue(() -> {
             if (context.getPlayer() instanceof ServerPlayerEntity player) {
                 TypingTracker.getInstance().startTyping(player);

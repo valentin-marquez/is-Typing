@@ -57,14 +57,14 @@ jobs:
             !fabric/build/libs/*-sources.jar
           if-no-files-found: error
 
-      - name: Upload Forge JAR
+      - name: Upload NeoForge JAR
         uses: actions/upload-artifact@v4
         with:
-          name: forge-jar
+          name: neoforge-jar
           path: |
-            forge/build/libs/istyping-forge-*.jar
-            !forge/build/libs/*-dev-shadow.jar
-            !forge/build/libs/*-sources.jar
+            neoforge/build/libs/istyping-neoforge-*.jar
+            !neoforge/build/libs/*-dev-shadow.jar
+            !neoforge/build/libs/*-sources.jar
           if-no-files-found: error
 
   publish-fabric:
@@ -106,15 +106,15 @@ jobs:
             fabric-api | depends
             architectury-api | depends
 
-  publish-forge:
+  publish-neoforge:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download Forge JAR
+      - name: Download NeoForge JAR
         uses: actions/download-artifact@v4
         with:
-          name: forge-jar
-          path: forge-artifacts
+          name: neoforge-jar
+          path: neoforge-artifacts
 
       - name: Determine version type
         id: version_type
@@ -128,63 +128,21 @@ jobs:
             echo "type=release" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish Forge to Modrinth
+      - name: Publish NeoForge to Modrinth
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-
-          files: forge-artifacts/istyping-forge-*.jar
-          name: "IsTyping ${{ github.event.release.tag_name }} (Forge)"
-          version: "${{ github.event.release.tag_name }}-forge"
+          files: neoforge-artifacts/istyping-neoforge-*.jar
+          name: "IsTyping ${{ github.event.release.tag_name }} (NeoForge)"
+          version: "${{ github.event.release.tag_name }}-neoforge"
           version-type: ${{ steps.version_type.outputs.type }}
           changelog: ${{ github.event.release.body }}
           game-versions: ${{ needs.build.outputs.supported_versions }}
-          loaders: forge
+          loaders: neoforge
           dependencies: |
             architectury-api | depends
-
-  # publish-neoforge:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download NeoForge JAR
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: neoforge-jar
-  #         path: neoforge-artifacts
-  #
-  #     - name: Determine version type
-  #       id: version_type
-  #       run: |
-  #         TAG="${{ github.event.release.tag_name }}"
-  #         if [[ "$TAG" == *"-alpha"* ]]; then
-  #           echo "type=alpha" >> $GITHUB_OUTPUT
-  #         elif [[ "$TAG" == *"-beta"* ]] || [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
-  #           echo "type=beta" >> $GITHUB_OUTPUT
-  #         else
-  #           echo "type=release" >> $GITHUB_OUTPUT
-  #         fi
-  #
-  #     - name: Publish NeoForge to Modrinth & CurseForge
-  #       uses: Kir-Antipov/mc-publish@v3.3
-  #       with:
-  #         modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
-  #         modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-  #
-  #         curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
-  #         curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
-  #
-  #         files: neoforge-artifacts/vouch-neoforge-*.jar
-  #         name: "Vouch ${{ github.event.release.tag_name }} (NeoForge)"
-  #         version: "${{ github.event.release.tag_name }}-neoforge"
-  #         version-type: ${{ steps.version_type.outputs.type }}
-  #         changelog: ${{ github.event.release.body }}
-  #         game-versions: ${{ needs.build.outputs.supported_versions }}
-  #         loaders: neoforge
-  #         dependencies: |
-  #           architectury-api | depends
 
   attach-jars:
     needs: build
@@ -202,4 +160,4 @@ jobs:
         with:
           files: |
             artifacts/fabric-jar/istyping-fabric-*.jar
-            artifacts/forge-jar/istyping-forge-*.jar
+            artifacts/neoforge-jar/istyping-neoforge-*.jar

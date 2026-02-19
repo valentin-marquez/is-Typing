@@ -3,6 +3,8 @@ package com.nozz.it.server;
 import com.nozz.it.config.ServerConfig;
 import com.nozz.it.network.IsTypingNetworkManager;
 import com.nozz.it.network.PlayerTypingPacket;
+
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 
 import java.util.*;
@@ -18,11 +20,8 @@ public class TypingTracker {
     private final Map<UUID, PlayerTypingState> typingPlayers = new ConcurrentHashMap<>();
     private final Map<UUID, Long> lastTypingEvent = new ConcurrentHashMap<>(); // Anti-spam
     
-    private Timer timeoutTimer;
+    private int tickCounter = 0;
     
-    private TypingTracker() {
-        startTimeoutChecker();
-    }
     
     public static TypingTracker getInstance() {
         return INSTANCE;
@@ -51,12 +50,19 @@ public class TypingTracker {
         }
         
         boolean wasTyping = typingPlayers.containsKey(uuid);
-        typingPlayers.put(uuid, new PlayerTypingState(player, currentTime));
+        typingPlayers.put(uuid, new PlayerTypingState(name, currentTime));
         lastTypingEvent.put(uuid, currentTime);
         
         // Only broadcast if it's the first time or if there was a timeout
         if (!wasTyping) {
             broadcastTypingState(player.getServer(), uuid, name, true);
+        }
+    }
+
+    public void tick(MinecraftServer server) {
+        if (++tickCounter >= 20) {
+            tickCounter = 0;
+            checkTimeouts(server);   
         }
     }
     
@@ -97,22 +103,9 @@ public class TypingTracker {
     }
     
     /**
-     * Starts the timeout checker
-     */
-    private void startTimeoutChecker() {
-        timeoutTimer = new Timer("IsTyping-TimeoutChecker", true);
-        timeoutTimer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                checkTimeouts();
-            }
-        }, 1000, 1000); // Check every second
-    }
-    
-    /**
      * Checks and removes players with timeout
      */
-    private void checkTimeouts() {
+    private void checkTimeouts(MinecraftServer server) {
         ServerConfig config = ServerConfig.getInstance();
         long currentTime = System.currentTimeMillis();
         long timeout = config.getTypingTimeoutMs();
@@ -127,11 +120,11 @@ public class TypingTracker {
         // Remove and broadcast
         for (UUID uuid : toRemove) {
             PlayerTypingState state = typingPlayers.remove(uuid);
-            if (state != null && state.player.getServer() != null) {
+            if (state != null) {
                 broadcastTypingState(
-                    state.player.getServer(), 
+                    server, 
                     uuid, 
-                    state.player.getName().getString(), 
+                    state.playerName, 
                     false
                 );
             }
@@ -139,22 +132,33 @@ public class TypingTracker {
     }
     
     /**
+     * Simulates typing load by injecting fake players
+     */
+    public void simulateTypingLoad(MinecraftServer server, int count) {
+        long currentTime = System.currentTimeMillis();
+        for (int i = 0; i < count; i++) {
+            String botName = "Bot" + i;
+            UUID botUuid = UUID.nameUUIDFromBytes(botName.getBytes());
+            
+            typingPlayers.put(botUuid, new PlayerTypingState(botName, currentTime));
+            broadcastTypingState(server, botUuid, botName, true);
+        }
+    }
+    
+    /**
      * Stops the timeout checker
      */
     public void shutdown() {
-        if (timeoutTimer != null) {
-            timeoutTimer.cancel();
-            timeoutTimer = null;
-        }
+
         typingPlayers.clear();
     }
     
     private static class PlayerTypingState {
-        final ServerPlayerEntity player;
+        final String playerName;
         final long lastUpdate;
         
-        PlayerTypingState(ServerPlayerEntity player, long lastUpdate) {
-            this.player = player;
+        PlayerTypingState(String playerName, long lastUpdate) {
+            this.playerName = playerName;
             this.lastUpdate = lastUpdate;
         }
     }

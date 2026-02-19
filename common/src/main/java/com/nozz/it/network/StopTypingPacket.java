@@ -2,35 +2,23 @@ package com.nozz.it.network;
 
 import com.nozz.it.server.TypingTracker;
 import dev.architectury.networking.NetworkManager.PacketContext;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
-import io.netty.buffer.Unpooled;
+import net.minecraft.util.Identifier;
 
-/**
- * C2S packet sent when a player stops typing.
- */
-public class StopTypingPacket {
-    
-    public StopTypingPacket() {}
-    
-    /**
-     * Constructs the packet from a buffer
-     */
-    public StopTypingPacket(PacketByteBuf buf) {
-        // This packet has no additional data
+public record StopTypingPacket() implements CustomPayload {
+
+    public static final CustomPayload.Id<StopTypingPacket> ID = new CustomPayload.Id<>(Identifier.of("istyping", "stop_typing"));
+    public static final PacketCodec<RegistryByteBuf, StopTypingPacket> CODEC = PacketCodec.unit(new StopTypingPacket());
+
+    @Override
+    public CustomPayload.Id<? extends CustomPayload> getId() {
+        return ID;
     }
-    
-    /**
-     * Writes the packet to a buffer
-     */
-    public PacketByteBuf toBuffer() {
-        return new PacketByteBuf(Unpooled.buffer());
-    }
-    
-    /**
-     * Handles packet reception on the server
-     */
-    public static void receive(PacketByteBuf buf, PacketContext context) {
+
+    public static void receive(StopTypingPacket payload, PacketContext context) {
         context.queue(() -> {
             if (context.getPlayer() instanceof ServerPlayerEntity player) {
                 TypingTracker.getInstance().stopTyping(player);
