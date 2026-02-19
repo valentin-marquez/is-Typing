@@ -89,14 +89,11 @@ jobs:
             echo "type=release" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish Fabric to Modrinth & CurseForge
+      - name: Publish Fabric to Modrinth
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
-
-          curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files: fabric-artifacts/istyping-fabric-*.jar
           name: "IsTyping ${{ github.event.release.tag_name }} (Fabric)"
@@ -131,14 +128,12 @@ jobs:
             echo "type=release" >> $GITHUB_OUTPUT
           fi
 
-      - name: Publish Forge to Modrinth & CurseForge
+      - name: Publish Forge to Modrinth
         uses: Kir-Antipov/mc-publish@v3.3
         with:
           modrinth-id: ${{ vars.MODRINTH_PROJECT_ID }}
           modrinth-token: ${{ secrets.MODRINTH_TOKEN }}
 
-          curseforge-id: ${{ vars.CURSEFORGE_PROJECT_ID }}
-          curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
 
           files: forge-artifacts/istyping-forge-*.jar
           name: "IsTyping ${{ github.event.release.tag_name }} (Forge)"
